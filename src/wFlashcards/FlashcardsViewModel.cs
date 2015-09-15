@@ -105,14 +105,14 @@ namespace wFlashcards
 
     public class QuestionsMachine
     {
-        List<QuestionAndAnswer> QuestionsAndAnswers = new List<QuestionAndAnswer>();
-        Random _random = new Random();
+        readonly List<QuestionAndAnswer> QuestionsAndAnswers = new List<QuestionAndAnswer>();
+        readonly Random _random = new Random();
 
         public QuestionsMachine()
         {
-            QuestionsAndAnswers.Add(new QuestionAndAnswer { Question = "Q1", Answer = "A1", });
-            QuestionsAndAnswers.Add(new QuestionAndAnswer { Question = "Q2", Answer = "A2", });
-            QuestionsAndAnswers.Add(new QuestionAndAnswer { Question = "Q3", Answer = "A3", });
+            var excelDataProvider = new ExcelDataProvider();
+            var questionsAndAnswersData = excelDataProvider.ReadQuestionsAndAnswers();
+            QuestionsAndAnswers.AddRange(questionsAndAnswersData);
         }
 
         public QuestionAndAnswer GetRandomNext()
@@ -126,5 +126,18 @@ namespace wFlashcards
     {
         public string Question { get; set; }
         public string Answer { get; set; }
+    }
+
+    public class ExcelDataProvider
+    {
+        public IEnumerable<QuestionAndAnswer> ReadQuestionsAndAnswers()
+        {
+            var excelDataFactory = new LinqToExcel.ExcelQueryFactory(@"QuestionsAndAnswersData.xlsx");
+            var rows = excelDataFactory.Worksheet("Sheet1");
+            foreach (var row in rows)
+            {
+                yield return new QuestionAndAnswer {Question = row[0], Answer = row[1]};
+            }
+        }
     }
 }
