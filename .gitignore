@@ -1,0 +1,14 @@
+*obj/
+*debug/
+*release/
+_ReSharper*
+*.suo
+*.user
+packages
+build
+bin/
+*.sln.cache
+logfile*
+TestResult.xml
+*.swp
+.vs
